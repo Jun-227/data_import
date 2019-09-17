@@ -13,16 +13,22 @@ library(tidyverse)
 ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
+
+
 ```
 
 ## R Markdown
 
 
 
-```{r cars}
-summary(cars)
+```{r import}
+litters_data = read.csv(file = "./data_import_examples/FAS_litters.csv")
+litters_data = janitor::clean_names(litters_data)
 ```
-
+```{r learning}
+pups_data = read.csv(file = "./data_import_examples/FAS_pups.csv")
+pups_data_new = read.csv(file = "/Users/junyin/Desktop/data science/data_import/data_import_examples/FAS_pups.csv")
+```
 ## Including Plots
 
 You can also embed plots, for example:
