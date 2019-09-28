@@ -1,5 +1,6 @@
 ---
 title: "importdata"
+author: "Jun"
 output: html_document
 ---
 
@@ -17,7 +18,8 @@ library(tidyverse)
 
 ```
 
-## R Markdown
+## R load CSV data
+
 
 
 
@@ -28,6 +30,9 @@ litters_data = janitor::clean_names(litters_data)
 ```{r learning}
 pups_data = read.csv(file = "./data_import_examples/FAS_pups.csv")
 pups_data_new = read.csv(file = "/Users/junyin/Desktop/data science/data_import/data_import_examples/FAS_pups.csv")
+```
+```{r error?????}
+litters_data = read.csv(file = "./data_import_examples/FAS_litters.csv", skip = 10, col.names = FALSE)
 ```
 ## Including Plots
 

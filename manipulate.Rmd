@@ -1,0 +1,85 @@
+---
+title: "data manipulation"
+author: "Jun"
+date: "9/24/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Import dataset
+
+```{r cars}
+litters_data = read_csv("./data_import_examples/FAS_litters.csv")
+litters_data = janitor::clean_names(litters_data)
+pups_data = read_csv("./data_import_examples/FAS_pups.csv")
+pups_data = janitor::clean_names(pups_data)
+
+pull(litters_data,group)
+```
+
+## Selecting
+```{r}
+#You can specify the columns you want to keep by naming all of them:
+select(litters_data, group, litter_number, gd0_weight, pups_born_alive)
+
+select(litters_data, group, litter_number)
+
+select(litters_data, litter_number, gd0_weight, starts_with("pups"))
+
+#change the order of column
+select(litters_data, litter_number, group, gd0_weight)
+
+#
+select(litters_data, litter_number,group, everything())
+
+#remove only group
+select(litters_data, -group)
+
+select(litters_data, litter_number, gd0_weight:pups_born_alive)
+
+## rename
+select(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
+rename(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
+
+```
+## filtering
+
+```{r}
+filter(litters_data, group == "Mod7")
+filter(litters_data, gd_of_birth == 20)#numeric variables or character variables
+filter(litters_data, pups_born_alive < 6, group == "Con7")
+#for missing values
+# don't do this
+#filter(litters_data, !is.na(gd0_weight))
+drop_na(litters_data, gd0_weight)
+
+```
+## mutate
+add variables in dataset
+```{r}
+mutate(litters_data,wt_gain = gd18_weight - gd0_weight,group)
+mutate(litters_data,
+  wt_gain = gd18_weight - gd0_weight,
+  group = str_to_lower(group)
+)
+
+```
+## Arrange
+
+```{r}
+arrange(litters_data, pups_born_alive)
+arrange(litters_data,desc(pups_born_alive))
+```
+## pipe...
+```{r}
+litters_data %>%
+```
+
+
+
+
+
