@@ -369,7 +369,101 @@ summary {
 </div>
 
 
+<div id="wide-to-long" class="section level2">
+<h2>Wide to Long</h2>
+<pre class="r"><code>pulse_data = haven::read_sas(&quot;./data_import_examples/public_pulse_data.sas7bdat&quot;)%&gt;%
+janitor::clean_names()
 
+#pulse_tidy_data = 
+#  pivot_longer(
+#    pulse_data, 
+#    bdi_score_bl:bdi_score_12m,
+#    names_to = &quot;visit&quot;, 
+ #   values_to = &quot;bdi&quot;)
+#remove &quot;bdi_score_&quot;
+pulse_tidy_data = 
+  pivot_longer(
+    pulse_data, 
+    bdi_score_bl:bdi_score_12m,
+    names_to = &quot;visit&quot;, 
+    names_prefix = &quot;bdi_score_&quot;,
+    values_to = &quot;bdi&quot;)%&gt;%
+  mutate(
+    visit = recode(visit,&quot;bl&quot; = &quot;00m&quot;)
+  )
+
+#the code below will import, tidy, and transform the PULSE dataset into a usable format
+#pulse_data = 
+#  haven::read_sas(&quot;./data_import_examples/public_pulse_data.sas7bdat&quot;) %&gt;%
+#  janitor::clean_names() %&gt;%
+#  pivot_longer(
+#    bdi_score_bl:bdi_score_12m,
+#    names_to = &quot;visit&quot;, 
+#    names_prefix = &quot;bdi_score_&quot;,
+#    values_to = &quot;bdi&quot;) %&gt;%
+#  select(id, visit, everything()) %&gt;%
+#  mutate(
+#    visit = replace(visit, visit == &quot;bl&quot;, &quot;00m&quot;),
+#    visit = factor(visit, levels = str_c(c(&quot;00&quot;, &quot;01&quot;, &quot;06&quot;, &quot;12&quot;), &quot;m&quot;))) %&gt;%
+#  arrange(id, visit)</code></pre>
+</div>
+<div id="separate-in-litters" class="section level2">
+<h2>separate in litters</h2>
+<pre class="r"><code>#litters_data = read_csv(&quot;./data_import_examples/FAS_litters.csv&quot;)%&gt;%
+#  janitor::clean_names()%&gt;%
+# separate(col = group, into = c(&quot;dose&quot;, &quot;day_of_tx&quot;),3)
+#we can also do more things
+litters_data = 
+  read_csv(&quot;./data_import_examples/FAS_litters.csv&quot;, col_types = &quot;ccddiiii&quot;) %&gt;%
+  janitor::clean_names() %&gt;%
+  separate(group, into = c(&quot;dose&quot;, &quot;day_of_tx&quot;), sep = 3) %&gt;%
+  mutate(
+    dose = str_to_lower(dose),
+    wt_gain = gd18_weight - gd0_weight) %&gt;%
+  arrange(litter_number)</code></pre>
+</div>
+<div id="section" class="section level2">
+<h2></h2>
+<pre class="r"><code>litters_data %&gt;% 
+  select(litter_number, ends_with(&quot;weight&quot;)) %&gt;% 
+  pivot_longer(
+    gd0_weight:gd18_weight,
+    names_to = &quot;gd&quot;, 
+    values_to = &quot;weight&quot;) %&gt;% 
+  mutate(gd = recode(gd, &quot;gd0_weight&quot; = 0, &quot;gd18_weight&quot; = 18))</code></pre>
+<pre><code>## # A tibble: 98 x 3
+##    litter_number      gd weight
+##    &lt;chr&gt;           &lt;dbl&gt;  &lt;dbl&gt;
+##  1 #1/2/95/2           0   27  
+##  2 #1/2/95/2          18   42  
+##  3 #1/5/3/83/3-3/2     0   NA  
+##  4 #1/5/3/83/3-3/2    18   NA  
+##  5 #1/6/2/2/95-2       0   NA  
+##  6 #1/6/2/2/95-2      18   NA  
+##  7 #1/82/3-2           0   NA  
+##  8 #1/82/3-2          18   NA  
+##  9 #100                0   20  
+## 10 #100               18   39.2
+## # … with 88 more rows</code></pre>
+</div>
+<div id="go-untidy." class="section level2">
+<h2>go untidy….</h2>
+<pre class="r"><code>analysis_result = tibble(
+  group = c(&quot;treatment&quot;, &quot;treatment&quot;, &quot;placebo&quot;, &quot;placebo&quot;),
+  time = c(&quot;pre&quot;, &quot;post&quot;, &quot;pre&quot;, &quot;post&quot;),
+  mean = c(4, 8, 3.5, 4)
+)
+
+pivot_wider(
+  analysis_result, 
+  names_from = &quot;time&quot;, 
+  values_from = &quot;mean&quot;)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   group       pre  post
+##   &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;
+## 1 treatment   4       8
+## 2 placebo     3.5     4</code></pre>
+</div>
 
 
 
