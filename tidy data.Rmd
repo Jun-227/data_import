@@ -143,6 +143,8 @@ litter_data =
 
 fas_data = 
   left_join(pup_data, litter_data, by = "litter_number")
+# could join by multiple variables
+# we can also join by different variables
 ```
 
 
