@@ -11,3 +11,44 @@ library(tidyverse)
 ```
 
 
+
+## Wide to Long
+```{r echo=TRUE}
+pulse_data = haven::read_sas("./data_import_examples/public_pulse_data.sas7bdat")%>%
+janitor::clean_names()%>%
+
+pulse_tidy_data = 
+  pivot_longer(
+    pulse_data, 
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    values_to = "bdi")
+#remove "bdi_score_"
+pulse_tidy_data = 
+  pivot_longer(
+    pulse_data, 
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi")%>%
+  mutate(
+    visit = recode(visit,"bl" = "00m")
+  )
+
+#the code below will import, tidy, and transform the PULSE dataset into a usable format
+pulse_data = 
+  haven::read_sas("./data_import_examples/public_pulse_data.sas7bdat") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi") %>%
+  select(id, visit, everything()) %>%
+  mutate(
+    visit = replace(visit, visit == "bl", "00m"),
+    visit = factor(visit, levels = str_c(c("00", "01", "06", "12"), "m"))) %>%
+  arrange(id, visit)
+```
+
+
